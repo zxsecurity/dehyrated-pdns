@@ -10,33 +10,12 @@ set -u
 set -o pipefail
 umask 077
 
-mysql_base="pdns"
-mysql_host="localhost"
-mysql_user="root"
-mysql_pass="password"
-table_domains="domains"
-table_records="records"
-mydir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [ -f "$mydir/pdns.sh.conf" ]; then . $mydir/pdns.sh.conf; fi
-
 # Wait this value in seconds at max for all nameservers to be ready 
 # with the deployed challange or fail if they are not
 dns_sync_timeout_secs=90
 
-export pw_file="$HOME/.letsencrypt_pdns_my.cnf"
-export mysql_default_opts="--defaults-file=$pw_file --host=$mysql_host --user=$mysql_user --silent"
-
-# write the mysql password to file, do not specify it the command line(insecure)
-touch $pw_file
-chmod 600 $pw_file
-cat >$pw_file <<EOF
-[mysql]
-password=$mysql_pass
-EOF
-
    domain="${2}"
     token="${4}"
-timestamp=$(date +%s)
 
 IFS='.' read -a myarray_domain <<< "$domain"
 # Extract TLD from domain
@@ -50,18 +29,8 @@ else
 fi
 done="no"
 
-function mysql_exec { mysql $mysql_default_opts "${@}"; }
-
 if [[ "$1" = "deploy_challenge" ]]; then
-       id="$(mysql_exec -N -e "SELECT id      FROM $mysql_base.$table_domains WHERE name='$root_domain';")"
-      soa="$(mysql_exec -N -e "SELECT content FROM $mysql_base.$table_records WHERE domain_id='$id' AND type='SOA'")"
-    idSoa="$(mysql_exec -N -e "SELECT id      FROM $mysql_base.$table_records WHERE domain_id='$id' AND type='SOA'")"
-   IFS=' ' read -r -a soArray <<< "$soa"
-   soArray[2]=$((soArray[2]+1))
-   soaNew="$( IFS=$' '; echo "${soArray[*]}" )"
-   mysql_exec -e "UPDATE $mysql_base.$table_records SET content='$soaNew' WHERE id='$idSoa'"
-   mysql_exec -e "INSERT INTO $mysql_base.$table_records (id,domain_id,name,type,content,ttl,prio,change_date) VALUES ('', '$id', '_acme-challenge.$domain','TXT','$token','5','0','$timestamp')"
- 
+   pdnsutil add-record "${root_domain}" _acme-challenge TXT "${token}"
    domain_without_trailing_dot=${domain%.}
    dots=${domain_without_trailing_dot//[^.]}
    if [ "${#dots}" -gt $root_length ]; then
@@ -94,7 +63,7 @@ if [[ "$1" = "deploy_challenge" ]]; then
 fi
 
 if [[ "$1" = "clean_challenge" ]]; then
-    mysql_exec -e "DELETE FROM $mysql_base.$table_records WHERE content = '$token' AND type = 'TXT'"
+    pdnsutil delete-rrset "${root_domain}" _acme-challenge TXT
     done="yes"
 fi
 
