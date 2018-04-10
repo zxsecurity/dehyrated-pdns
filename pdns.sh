@@ -20,7 +20,7 @@ if [[ "$1" = "deploy_challenge" ]]; then
    domain="${2}"
    token="${4}"
    
-   pdnsutil add-record "${domain}" _acme-challenge TXT 1 "\"${token}\""
+   pdnsutil add-record "${domain}" _acme-challenge TXT 10 "\"${token}\""
    nameservers="$(dig -t ns +short ${domain})"
    challenge_deployed=0
    for((timeout_counter=0,failed_servers=0;$timeout_counter<$dns_sync_timeout_secs;failed_servers=0,timeout_counter++)); do
