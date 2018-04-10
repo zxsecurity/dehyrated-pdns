@@ -21,8 +21,6 @@ if [[ "$1" = "deploy_challenge" ]]; then
    token="${4}"
    
    pdnsutil add-record "${domain}" _acme-challenge TXT "\"${token}\""
-   domain_without_trailing_dot=${domain%.}
-   dots=${domain_without_trailing_dot//[^.]}
    nameservers="$(dig -t ns +short ${domain})"
    challenge_deployed=0
    for((timeout_counter=0,failed_servers=0;$timeout_counter<$dns_sync_timeout_secs;failed_servers=0,timeout_counter++)); do
