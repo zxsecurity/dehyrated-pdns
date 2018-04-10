@@ -20,7 +20,7 @@ if [[ "$1" = "deploy_challenge" ]]; then
    domain="${2}"
    token="${4}"
    
-   pdnsutil add-record "${domain}" _acme-challenge TXT "${token}"
+   pdnsutil add-record "${domain}" _acme-challenge TXT "\"${token}\""
    domain_without_trailing_dot=${domain%.}
    dots=${domain_without_trailing_dot//[^.]}
    if [ "${#dots}" -gt $root_length ]; then
