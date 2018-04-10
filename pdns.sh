@@ -23,13 +23,7 @@ if [[ "$1" = "deploy_challenge" ]]; then
    pdnsutil add-record "${domain}" _acme-challenge TXT "\"${token}\""
    domain_without_trailing_dot=${domain%.}
    dots=${domain_without_trailing_dot//[^.]}
-   if [ "${#dots}" -gt $root_length ]; then
-       # certificate is for subdomain
-       nameservers="$(dig -t ns +short ${domain#*.})"
-   else
-       # certificate is for domain itself, dont strip of a domain part
-       nameservers="$(dig -t ns +short ${domain})"
-   fi
+   nameservers="$(dig -t ns +short ${domain})"
    challenge_deployed=0
    for((timeout_counter=0,failed_servers=0;$timeout_counter<$dns_sync_timeout_secs;failed_servers=0,timeout_counter++)); do
      for nameserver in $nameservers;do
