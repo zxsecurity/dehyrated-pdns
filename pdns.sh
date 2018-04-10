@@ -64,6 +64,11 @@ if [[ "${1}" =~ ^(deploy_cert|deploy_ocsp|unchanged_cert|invalid_challenge|reque
     done="yes"
 fi
 
+if [[ "${1}" = "this_hookscript_is_broken__dehydrated_is_working_fine__please_ignore_unknown_hooks_in_your_script" ]]; then
+   # do nothing
+   done="yes"
+fi
+
 if [[ ! "${done}" = "yes" ]]; then
     echo Unkown hook "${1}"
     exit 1
