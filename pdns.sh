@@ -20,7 +20,9 @@ if [[ "$1" = "deploy_challenge" ]]; then
    domain="${2}"
    token="${4}"
    
-   pdnsutil add-record "${domain}" _acme-challenge TXT 10 "\"${token}\""
+   set +e
+   sudo pdnsutil add-record "${domain}" _acme-challenge TXT 10 "\"${token}\""
+   set -e
    nameservers="$(dig -t ns +short ${domain})"
    challenge_deployed=0
    for((timeout_counter=0,failed_servers=0;$timeout_counter<$dns_sync_timeout_secs;failed_servers=0,timeout_counter++)); do
@@ -47,11 +49,20 @@ fi
 if [[ "$1" = "clean_challenge" ]]; then
     domain="${2}"
 
-    pdnsutil delete-rrset "${domain}" _acme-challenge TXT
+    sudo pdnsutil delete-rrset "${domain}" _acme-challenge TXT
     done="yes"
 fi
 
-if [[ "${1}" =~ ^(deploy_cert|deploy_ocsp|unchanged_cert|invalid_challenge|request_failure|generate_csr|startup_hook|exit_hook)$ ]]; then
+if [[ "$1" = "deploy_cert" ]]; then
+   local DOMAIN="${1}" KEYFILE="${2}" CERTFILE="${3}" FULLCHAINFILE="${4}" CHAINFILE="${5}" TIMESTAMP="${6}"
+   
+   cp "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /home/dehydrated/ssl/
+   chmod g+r /home/dehydrated/ssl/*
+   
+   done="yes"
+fi
+
+if [[ "${1}" =~ ^(deploy_ocsp|unchanged_cert|invalid_challenge|request_failure|generate_csr|startup_hook|exit_hook)$ ]]; then
     # do nothing for now
     done="yes"
 fi
