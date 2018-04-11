@@ -56,8 +56,8 @@ fi
 if [[ "$1" = "deploy_cert" ]]; then
    local DOMAIN="${1}" KEYFILE="${2}" CERTFILE="${3}" FULLCHAINFILE="${4}" CHAINFILE="${5}" TIMESTAMP="${6}"
    
-   cp "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /home/dehydrated/ssl/
-   chmod g+r /home/dehydrated/ssl/*
+   cp "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /opt/ssl/
+   chmod g+r /opt/ssl/*
    
    done="yes"
 fi
