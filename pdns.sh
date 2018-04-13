@@ -60,7 +60,7 @@ if [[ "$1" = "deploy_cert" ]]; then
    OLDUMASK=$(umask)
    umask 0027
    echo "${TIMESTAMP}" | sudo tee /opt/ssl/timestamp
-   umask $(OLDUMASK)
+   umask "${OLDUMASK}"
    sudo touch --reference="${KEYFILE}" /opt/ssl/timestamp
    chmod g+r /opt/ssl/*
    
