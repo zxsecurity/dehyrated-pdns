@@ -54,7 +54,7 @@ if [[ "$1" = "clean_challenge" ]]; then
 fi
 
 if [[ "$1" = "deploy_cert" ]]; then
-   local DOMAIN="${1}" KEYFILE="${2}" CERTFILE="${3}" FULLCHAINFILE="${4}" CHAINFILE="${5}" TIMESTAMP="${6}"
+   DOMAIN="${3}" KEYFILE="${4}" CERTFILE="${5}" FULLCHAINFILE="${6}" CHAINFILE="${7}" TIMESTAMP="${8}"
    
    cp -p "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /opt/ssl/
    echo "${TIMESTAMP}" > /opt/ssl/timestamp
