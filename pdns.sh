@@ -56,7 +56,9 @@ fi
 if [[ "$1" = "deploy_cert" ]]; then
    local DOMAIN="${1}" KEYFILE="${2}" CERTFILE="${3}" FULLCHAINFILE="${4}" CHAINFILE="${5}" TIMESTAMP="${6}"
    
-   cp "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /opt/ssl/
+   cp -p "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /opt/ssl/
+   echo "${TIMESTAMP}" > /opt/ssl/timestamp
+   touch --reference="${KEYFILE}" /opt/ssl/timestamp
    chmod g+r /opt/ssl/*
    
    done="yes"
