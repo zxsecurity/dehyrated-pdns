@@ -56,13 +56,11 @@ fi
 if [[ "$1" = "deploy_cert" ]]; then
    DOMAIN="${2}" KEYFILE="${3}" CERTFILE="${4}" FULLCHAINFILE="${5}" CHAINFILE="${6}" TIMESTAMP="${7}"
    
+   # Have sudoes commands for all these, with NOPASSWD set
    sudo cp -p "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /opt/ssl/
-   OLDUMASK=$(umask)
-   umask 0027
    echo "${TIMESTAMP}" | sudo tee /opt/ssl/timestamp
-   umask "${OLDUMASK}"
    sudo touch --reference="${KEYFILE}" /opt/ssl/timestamp
-   chmod g+r /opt/ssl/*
+   sudo chmod g+r /opt/ssl/*
    
    done="yes"
 fi
