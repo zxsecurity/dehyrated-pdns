@@ -56,9 +56,9 @@ fi
 if [[ "$1" = "deploy_cert" ]]; then
    DOMAIN="${2}" KEYFILE="${3}" CERTFILE="${4}" FULLCHAINFILE="${5}" CHAINFILE="${6}" TIMESTAMP="${7}"
    
-   cp -p "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /opt/ssl/
-   echo "${TIMESTAMP}" > /opt/ssl/timestamp
-   touch --reference="${KEYFILE}" /opt/ssl/timestamp
+   sudo cp -p "${KEYFILE}" "${FULLCHAINFILE}" "${CERTFILE}" "${CHAINFILE}" /opt/ssl/
+   echo "${TIMESTAMP}" | sudo tee /opt/ssl/timestamp
+   sudo touch --reference="${KEYFILE}" /opt/ssl/timestamp
    chmod g+r /opt/ssl/*
    
    done="yes"
