@@ -22,6 +22,7 @@ if [[ "$1" = "deploy_challenge" ]]; then
    
    set +e
    sudo pdnsutil add-record "${domain}" _acme-challenge TXT 10 "\"${token}\""
+   sudo pdnsutil increase-serial "${domain}"
    set -e
    nameservers="$(dig -t ns +short ${domain})"
    challenge_deployed=0
@@ -50,6 +51,7 @@ if [[ "$1" = "clean_challenge" ]]; then
     domain="${2}"
 
     sudo pdnsutil delete-rrset "${domain}" _acme-challenge TXT
+    sudo pdnsutil increase-serial "${domain}"
     done="yes"
 fi
 
